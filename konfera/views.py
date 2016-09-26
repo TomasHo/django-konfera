@@ -70,6 +70,7 @@ def event_details_view(request, event_slug):
 def cfp_form_view(request, event_slug):
     speaker_form = SpeakerForm(request.POST or None, prefix='speaker')
     talk_form = TalkForm(request.POST or None, prefix='talk')
+
     if speaker_form.is_valid() and talk_form.is_valid():
         speaker_instance = speaker_form.save()
         talk_instance = talk_form.save(commit=False)
@@ -77,13 +78,16 @@ def cfp_form_view(request, event_slug):
         talk_instance.status = CFP
         talk_instance.event = Event.objects.get(slug=event_slug)
         talk_instance.save()
-        message_text = _("Your talk proposal successfully created")
+        message_text = _("Your talk proposal successfully created.")
         messages.success(request, message_text)
+
         return HttpResponseRedirect(redirect_to='/event/')
+
     context = {'speaker_form': speaker_form,
                'talk_form': talk_form,
                }
 
     return render(request=request,
                   template_name='konfera/cfp_form.html',
-                  context=context, )
+                  context=context,
+                  )
